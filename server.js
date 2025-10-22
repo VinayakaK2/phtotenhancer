@@ -9,8 +9,6 @@ dotenv.config();
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
-app.use(express.static("public"));
-
 app.post("/enhance", upload.single("image"), async (req, res) => {
   const imagePath = req.file.path;
 
@@ -52,4 +50,17 @@ app.post("/enhance", upload.single("image"), async (req, res) => {
   res.json({ enhancedUrl: output });
 });
 
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+// Serve index.html from root
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
